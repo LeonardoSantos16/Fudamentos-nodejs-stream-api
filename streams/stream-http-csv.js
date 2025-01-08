@@ -1,31 +1,34 @@
 import { parse } from "csv-parse";
-import { Readable } from 'node:stream'
-import fs from 'node:fs'
+import fs from "node:fs";
 
-const streamCsvToApi = async (filePath) => {
-    const readableStream = fs.createReadStream(filePath)
-    const parser = parse({columns:true})
-    const stream = readableStream.pipe(parser)
-    for await (const record of stream){
-        const {title, description} = record
-        try{
-            fetch('http://localhost:777/tasks', {
-                method: 'POST',
-                headers: {'Content-Type': "application/json"},
-                body: JSON.stringify({ title, description }),
-            }).then(res => {
-                return res.text()
-            }).then(data => {
-                console.log(data)
-            })
-        } catch (error){
-            console.log(error)
-        }
+export const streamCsvToApi = async (filePath) => {
+  try {
+    const readableStream = fs.createReadStream(filePath);
+    const parser = parse({ columns: true });
+    const stream = readableStream.pipe(parser);
+
+    for await (const record of stream) {
+      const { title, description } = record;
+      console.log(record)
+      try {
+        const response = await fetch("http://localhost:777/tasks", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ title, description }),
+        });
+
+        const responseData = await response.text();
+        console.log("Resposta da API:", responseData);
+      } catch (error) {
+        console.error("Erro ao enviar dados para a API:", error);
+      }
     }
-}
+  } catch (error) {
+    console.error("Erro ao processar o CSV:", error);
+  }
+};
 
 streamCsvToApi('./popularApi.csv')
-
 /*
 class CsvReadableStream extends Readable {
     constructor(data) {

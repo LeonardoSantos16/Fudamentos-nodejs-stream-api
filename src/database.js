@@ -31,18 +31,15 @@ export class Database {
     }
 
     insert(table, data) {
-        const newData = {
-            ...data,
-            created_at: new Date().toISOString(),
-        }
+      
         if(Array.isArray(this.#database[table])){
-            this.#database[table].push(newData)
+            this.#database[table].push(data)
         } else {
-            this.#database[table] = [newData]
+            this.#database[table] = [data]
         }
         this.#persist()
 
-        return newData
+        return data
     }
 
     update(table, id, data) {

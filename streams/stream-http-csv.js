@@ -10,12 +10,7 @@ export const streamCsvToApi = async (filePath) => {
 
     for await (const record of stream) {
       const { title, description } = record;
-      console.log("record", record)
-      console.log("title", title)
-      console.log("description", description)
-      
       try {
-  
         const response = await fetch("http://localhost:777/tasks", {
           method: "POST",
           headers: { "Content-Type": "application/json" },
@@ -23,7 +18,6 @@ export const streamCsvToApi = async (filePath) => {
         });
 
         const responseData = await response.text();
-        console.log("Resposta da API:", responseData);
       } catch (error) {
         console.error("Erro ao enviar dados para a API:", error);
       }
@@ -47,24 +41,3 @@ export const streamCsvToApi = async (filePath) => {
     console.log('Banco de dados populado com sucesso.');
   }
 })();
-
-/*
-class CsvReadableStream extends Readable {
-    constructor(data) {
-        super();
-        this.data = data; 
-        this.index = 0; 
-      }
-    
-
-    _read() {
-      const i = this.index++
-        if(this.index < this.data.length) {
-            const chunk = this.data[this.index++]
-            this.push(chunk)
-        } else {
-            this.push(null)
-        }
-    }
-}
-*/

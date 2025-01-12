@@ -6,10 +6,8 @@ export async function json(req, res) {
     }
     
     const rawBody = Buffer.concat(buffers).toString();
-    console.log('Raw body:', rawBody);
     try {
       req.body = JSON.parse(rawBody);
-      console.log(req.body)
     } catch {
       req.body = null
     }

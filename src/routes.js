@@ -26,7 +26,6 @@ export const routes = [
         method: 'POST',
         path: buildRoutePath('/tasks'),
         handler: (req, res) => {
-          console.log(req.body)
           const { title, description} = req.body
           if (!title || !description) {
             return res.writeHead(400).end('Title and description are required', req.body);
@@ -66,7 +65,6 @@ export const routes = [
         path: buildRoutePath('/tasks/:id/complete'),
         handler: (req, res) => {
           const { id } = req.params
-          console.log(id)
           database.updateCompleted('tasks', id)
     
           return res.writeHead(204).end()

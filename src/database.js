@@ -19,7 +19,6 @@ export class Database {
 
     select(table, search) {
         let data = this.#database[table] ?? []
-        console.log(search)
         
         if (search){
             data = data.filter(row => {

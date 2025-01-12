@@ -44,14 +44,17 @@ export const routes = [
         path: buildRoutePath('/tasks/:id'),
         handler: (req, res) => {
           const { id } = req.params
-          const { title, description, completed_at } = req.body
-    
-          database.update('tasks', id, {
-            title,
-            description,
-            completed_at
-          })
-    
+          const { title, description } = req.body
+          let updateDate = {}
+
+          if(title !== undefined){
+            updateDate.title = title;
+          }
+          if(description !== undefined){
+            updateDate.description = description;
+          }
+          database.update('tasks', id, updateDate)
+  
           return res.writeHead(204).end()
         }
       },
@@ -60,11 +63,8 @@ export const routes = [
         path: buildRoutePath('/tasks/:id/complete'),
         handler: (req, res) => {
           const { id } = req.params
-          const { completed_at } = req.body
-    
-          database.update('tasks', id, {
-            completed_at
-          })
+          console.log(id)
+          database.updateCompleted('tasks', id)
     
           return res.writeHead(204).end()
         }

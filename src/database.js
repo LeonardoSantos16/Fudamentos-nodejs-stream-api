@@ -31,11 +31,17 @@ export class Database {
     }
 
     insert(table, data) {
-      
+        const newData = {
+            ...data,
+            created_at: new Date().toISOString(),
+            completed_at: null,
+            update_at: new Date().toISOString(),
+
+        }
         if(Array.isArray(this.#database[table])){
-            this.#database[table].push(data)
+            this.#database[table].push(newData)
         } else {
-            this.#database[table] = [data]
+            this.#database[table] = [newData]
         }
         this.#persist()
 
@@ -44,13 +50,18 @@ export class Database {
 
     update(table, id, data) {
         const rowIndex = this.#database[table].findIndex(row => row.id === id)
-        const updateData = {
-            ...data,
-            update_at: new Date().toISOString(),
-        }
+        const currentRow = this.#database[table][rowIndex];
+
         if(rowIndex > -1){
-            this.#database[table][rowIndex] = { id, ...updateData }
+            const updateData = {
+                ...currentRow,
+                ...data,
+                update_at: new Date().toISOString(),
+            }
+            this.#database[table][rowIndex] = updateData;
             this.#persist()
+        }else {
+            throw new Error(`Registro com Id ${id} não encontrado no banco de dados`)
         }
     }
 
@@ -62,4 +73,22 @@ export class Database {
             this.#persist()
         }
     }
+
+    updateCompleted(table, id) {
+        const rowIndex = this.#database[table].findIndex(row => row.id === id);
+        
+        if (rowIndex > -1) {
+          const currentRow = this.#database[table][rowIndex];
+      
+          this.#database[table][rowIndex] = {
+            ...currentRow,
+            completed_at: new Date().toISOString(),
+          };
+      
+          this.#persist(); 
+        } else {
+          throw new Error(`Registro com Id ${id} não encontrado no banco de dados`);
+        }
+      }
+      
 }

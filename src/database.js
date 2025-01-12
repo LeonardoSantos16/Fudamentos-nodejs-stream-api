@@ -19,16 +19,21 @@ export class Database {
 
     select(table, search) {
         let data = this.#database[table] ?? []
-
+        console.log(search)
+        
         if (search){
             data = data.filter(row => {
                 return Object.entries(search).some(([key, value]) => {
-                    return row[key].toLowerCase().includes(value.toLowerCase())
+                    const fieldValue = row[key]
+                    if (typeof fieldValue === 'string'){
+                        return row[key].toLowerCase().includes(value.toLowerCase())
+                    }
                 })
             })
         }
         return data
     }
+
 
     insert(table, data) {
         const newData = {
@@ -76,16 +81,17 @@ export class Database {
 
     updateCompleted(table, id) {
         const rowIndex = this.#database[table].findIndex(row => row.id === id);
-        
         if (rowIndex > -1) {
-          const currentRow = this.#database[table][rowIndex];
+            const currentRow = this.#database[table][rowIndex];
+            const completed_at = currentRow.completed_at === null 
+            ? new Date().toISOString() 
+            : null;
+            this.#database[table][rowIndex] = {
+                ...currentRow,
+                completed_at
+            };
       
-          this.#database[table][rowIndex] = {
-            ...currentRow,
-            completed_at: new Date().toISOString(),
-          };
-      
-          this.#persist(); 
+            this.#persist(); 
         } else {
           throw new Error(`Registro com Id ${id} não encontrado no banco de dados`);
         }
